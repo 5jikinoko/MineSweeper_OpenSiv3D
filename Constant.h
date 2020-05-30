@@ -4,7 +4,7 @@
 #define ___Constant.h
 インクルードガードはpragma onceがやってくれる
 */
-
+//定数を設定するヘッダファイルです
 
 const Size window_size(960, 660);
 const Size game_field(660, 660);
