@@ -93,6 +93,7 @@ void Main() {
 		const String text = U"クリア！";
 		while (System::Update()) {
 			blocks.print_map();
+			//リスタートボタンが押されたらstartにとぶ
 			if (print_menu(blocks, t, true)) {
 				goto start;
 			}
@@ -103,6 +104,7 @@ void Main() {
 		blocks.make_answer();
 		const String text = U"ゲームオーバー";
 		while (System::Update()) {
+			//リスタートボタンが押されたらstartにとぶ
 			blocks.print_map();
 			if (print_menu(blocks, t, true)) {
 				goto start;
