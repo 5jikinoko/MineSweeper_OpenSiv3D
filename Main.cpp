@@ -37,19 +37,21 @@ bool print_menu(const Blocks& b, int t, bool restart=false) {
 
 
 void Main() {
+	//ウィンドウの大きさを設定
 	Window::Resize(window_size);
 	// 背景を水色にする
 	Scene::SetBackground(ColorF(0.0, 1.0, 0.0));
-
+	//フォントを用意
 	Font font(window_size.x/12);
-
-	bool complete = false;
-
-	Stopwatch timer(false);
-
-	start:
 	
-	Blocks blocks(25, 40, 50, 3);
+	bool complete = false;	//ゲームをクリアしたならtrue
+	//タイマーを生成
+	Stopwatch timer(false);
+	
+	start:	//goto文のラベル
+	
+	Blocks blocks(25, 20, 50, 3);
+
 
 	int t = timer.ms();
 	while (System::Update()) {
@@ -60,9 +62,9 @@ void Main() {
 		blocks.print_map();
 		print_menu(blocks, t);
 	}
+	
 
-
-	timer.restart();
+	timer.restart();	//タイマースタート
 
 	while (System::Update()) {
 		if (MouseL.down()) {
@@ -86,14 +88,14 @@ void Main() {
 		blocks.print_map();
 		print_menu(blocks, timer.ms());
 	}
-	timer.pause();
-	t = timer.ms();
+
+	timer.pause();	//タイマーストップ
+	t = timer.ms();	
 
 	if (complete) {
 		const String text = U"クリア！";
 		while (System::Update()) {
 			blocks.print_map();
-			//リスタートボタンが押されたらstartにとぶ
 			if (print_menu(blocks, t, true)) {
 				goto start;
 			}
@@ -104,7 +106,6 @@ void Main() {
 		blocks.make_answer();
 		const String text = U"ゲームオーバー";
 		while (System::Update()) {
-			//リスタートボタンが押されたらstartにとぶ
 			blocks.print_map();
 			if (print_menu(blocks, t, true)) {
 				goto start;

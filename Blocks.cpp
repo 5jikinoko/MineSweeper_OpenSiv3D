@@ -27,7 +27,7 @@ Blocks::Blocks(int w, int h, int b, int hp) :
 //newで確保したヒープ領域は使わなくなったら解放
 //Blocks::~Blocks() { delete[] block_; }
 
-//マウスの座標からブロックの配列を指定する　ブロックをクリックしていないならPoint(-1,-1)を返す
+//マウスの座標からブロック番地をPoint(幅, 高さ)の形で返す　ブロックをクリックしていないならPoint(-1,-1)を返す
 Point Blocks::convert(Point p) const {
 	p.x -= margin_w;
 	p.y -= margin_h;
@@ -38,7 +38,6 @@ Point Blocks::convert(Point p) const {
 		return Point(-1, -1);
 	}
 }
-
 //クリックしたブロック以外にランダムに爆弾を置いたうえで開く
 //マウスの座標を引数にすること
 //マウスがブロックの上になかったらfalseを返す
@@ -102,22 +101,26 @@ bool Blocks::first_open(const Point p) {
 void Blocks::open(const Point& address) {
 
 	//ブロックをクリックしていなかったらこの関数を終了
-	if (address.x < 0 || width_ <= address.x || address.y < 0 || height_ <= address.y) return;
+	if (address.x < 0 || width_ <= address.x || address.y < 0 || height_ <= address.y || block_.at(address.y).at(address.x).state==2) {
+		return;
+	}
 
 	//？ブロックか開いていないブロックを左クリックしたときの処理
-	if (block_.at(address.y).at(address.x).state == 1 || block_.at(address.y).at(address.x).state == 3) {
-		//地雷を踏んだら
+	if (block_.at(address.y).at(address.x).state==1 || block_.at(address.y).at(address.x).state ==3) {
+		//ブロックを開く
+		//開いたマスが爆弾だったら
 		if (block_.at(address.y).at(address.x).isbomb) {
-			block_.at(address.y).at(address.x).state = -1;
 			--life_;
 			--bombs_;
 			--unopened_blocks_;
+			block_.at(address.y).at(address.x).state = -1;
+			return;
 		}
-		//地雷を踏まなかったら
 		else {
-			block_.at(address.y).at(address.x).state = 0;
 			--unopened_blocks_;
+			block_.at(address.y).at(address.x).state = 0;
 
+			//隣接するブロックに未判明爆弾がなかったら隣接するブロックも開く（再帰）
 			int neighbor_EaF = 0;
 			//隣接する爆発済みの爆弾とフラグを数えてneighbor_EaFに代入
 			for (int y = address.y - 1; y <= address.y + 1; ++y) {
@@ -131,6 +134,7 @@ void Blocks::open(const Point& address) {
 				for (int y = address.y - 1; y <= address.y + 1; ++y) {
 					for (int x = address.x - 1; x <= address.x + 1; ++x) {
 						if (0 <= x && x < width_ && 0 <= y && y < height_)
+							if (x == address.x && y == address.y) continue;
 							open(Point(x, y));
 					}
 				}
@@ -139,7 +143,7 @@ void Blocks::open(const Point& address) {
 	}
 
 	//開いてるブロック（数字のあるブロック）をクリックしたときの処理
-	else if (block_.at(address.y).at(address.x).state == 0) {
+	else if (block_.at(address.y).at(address.x).state==0) {
 		int neighbor_FAE = 0;
 		//隣接するフラグと爆発済みの爆弾を数えてneighbor_FAEに代入
 		for (int y = address.y - 1; y <= address.y + 1; ++y) {
@@ -149,7 +153,7 @@ void Blocks::open(const Point& address) {
 			}
 		}
 		//(隣接するフラグの数+爆発済みの爆弾)と隣接する爆弾の数が同じなら　隣接するフラグが立っておらず開いていないマスを開ける
-		if (block_.at(address.y).at(address.x).neighbor_bombs == neighbor_FAE) {
+		if (block_.at(address.y).at(address.x).neighbor_bombs <= neighbor_FAE) {
 			for (int y = address.y - 1; y <= address.y + 1; ++y) {
 				for (int x = address.x - 1; x <= address.x + 1; ++x) {
 					if (0 <= x && x < width_ && 0 <= y && y < height_ && (block_.at(y).at(x).state == 1 || block_.at(y).at(x).state == 3))
