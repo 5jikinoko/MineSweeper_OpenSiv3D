@@ -60,15 +60,17 @@ bool Blocks::first_open(const Point p) {
 			order.at(i) = num;
 		}
 
-		//デバイスの状態から乱数rdを生成
-		std::random_device rd;
+		//デバイスの状態から乱数を生成
+		std::random_device seed;
 		//rdを初期シードにして疑似乱数生成期クラスを初期化
-		std::mt19937 mt(rd());
+		std::mt19937 engien(seed());
+		//[0.0,1.0)の値を等確率で発生させる
+		std::uniform_real_distribution<double> dist(0.0, 1.0);
 		//配列をFisher-Yatesシャッフル
 		unsigned int j = 0;
 		int temp = 0;
 		for (int i = width_ * height_ - 2; i > 0; --i) {
-			j = mt() % (i + 1);
+			j = static_cast<int>(dist(engien) * (i + 1));
 			temp = order.at(j);
 			order.at(j) = order.at(i);
 			order.at(i) = temp;
