@@ -18,7 +18,6 @@ Blocks::Blocks(int w, int h, int b, int hp) :
 	flag_texture(Emoji(U"🚩")),
 	explosion_texture(Emoji(U"💥")),
 	question_texture(Emoji(U"❓")),
-	cross_texture(Emoji(U"❌")),
 	font(block_size_)
 {
 
@@ -104,12 +103,12 @@ bool Blocks::first_open(const Point p) {
 void Blocks::open(const Point& address) {
 
 	//ブロックをクリックしていなかったらこの関数を終了
-	if (address.x < 0 || width_ <= address.x || address.y < 0 || height_ <= address.y || block_.at(address.y).at(address.x).state==2) {
+	if (address.x < 0 || width_ <= address.x || address.y < 0 || height_ <= address.y || block_.at(address.y).at(address.x).state == 2) {
 		return;
 	}
 
 	//？ブロックか開いていないブロックを左クリックしたときの処理
-	if (block_.at(address.y).at(address.x).state==1 || block_.at(address.y).at(address.x).state ==3) {
+	if (block_.at(address.y).at(address.x).state == 1 || block_.at(address.y).at(address.x).state == 3) {
 		//ブロックを開く
 		//開いたマスが爆弾だったら
 		if (block_.at(address.y).at(address.x).isbomb) {
@@ -138,7 +137,7 @@ void Blocks::open(const Point& address) {
 					for (int x = address.x - 1; x <= address.x + 1; ++x) {
 						if (0 <= x && x < width_ && 0 <= y && y < height_)
 							if (x == address.x && y == address.y) continue;
-							open(Point(x, y));
+						open(Point(x, y));
 					}
 				}
 			}
@@ -146,7 +145,7 @@ void Blocks::open(const Point& address) {
 	}
 
 	//開いてるブロック（数字のあるブロック）をクリックしたときの処理
-	else if (block_.at(address.y).at(address.x).state==0) {
+	else if (block_.at(address.y).at(address.x).state == 0) {
 		int neighbor_FAE = 0;
 		//隣接するフラグと爆発済みの爆弾を数えてneighbor_FAEに代入
 		for (int y = address.y - 1; y <= address.y + 1; ++y) {
@@ -174,8 +173,8 @@ void Blocks::print_map() const {
 		for (int j = 0; j < width_; j++) {
 			switch (block_.at(i).at(j).state) {
 			case -3:Rect(margin_w + block_size_ * j, margin_h + block_size_ * i, block_size_).draw(HSV(0.0, 0.0, 0.8)).drawFrame(1, 1, HSV(0.0, 0.0, 0.6));
-				flag_texture.resized(block_size_ - shadow_size_ * 2).draw(margin_w + shadow_size_ + block_size_ * j, margin_h + shadow_size_ + block_size_ * i);
-				cross_texture.resized(block_size_ - shadow_size_ * 2).draw(margin_w + shadow_size_ + block_size_ * j, margin_h + shadow_size_ + block_size_ * i); break;
+				bomb_texture.resized(block_size_).draw(margin_w + block_size_ * j, margin_h + block_size_ * i);
+				flag_texture.resized(block_size_ - shadow_size_ * 2).draw(margin_w + shadow_size_ + block_size_ * j, margin_h + shadow_size_ + block_size_ * i); break;
 			case -2:Rect(margin_w + block_size_ * j, margin_h + block_size_ * i, block_size_).draw(HSV(0.0, 0.0, 0.8)).drawFrame(1, 1, HSV(0.0, 0.0, 0.6));
 				bomb_texture.resized(block_size_).draw(margin_w + block_size_ * j, margin_h + block_size_ * i); break;
 			case -1:Rect(margin_w + block_size_ * j, margin_h + block_size_ * i, block_size_).draw(HSV(0.0, 0.0, 0.8)).drawFrame(1, 1, HSV(0.0, 0.0, 0.6));
@@ -247,7 +246,7 @@ void Blocks::make_question(Point p) {
 void Blocks::make_answer() {
 	for (int y = 0; y < height_; ++y) {
 		for (int x = 0; x < width_; ++x) {
-			if(block_.at(y).at(x).state == 2 && -3:block_.at(y).at(x).isbomb){
+			if (block_.at(y).at(x).state == 2 && block_.at(y).at(x).isbomb) {
 				block_.at(y).at(x).state = -3;
 			}else if (block_.at(y).at(x).state == 1) {
 				if (block_.at(y).at(x).isbomb)

@@ -32,7 +32,6 @@ class Blocks {
 	const Texture flag_texture;
 	const Texture explosion_texture;
 	const Texture question_texture;
-	const Texture cross_texture;
 	const Font font;
 public:
 	//コンストラクタ
