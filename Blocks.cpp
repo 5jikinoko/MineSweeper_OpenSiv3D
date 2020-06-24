@@ -18,6 +18,7 @@ Blocks::Blocks(int w, int h, int b, int hp) :
 	flag_texture(Emoji(U"🚩")),
 	explosion_texture(Emoji(U"💥")),
 	question_texture(Emoji(U"❓")),
+	cross_texture(Emoji(U"❌")),
 	font(block_size_)
 {
 
@@ -172,6 +173,9 @@ void Blocks::print_map() const {
 	for (int i = 0; i < height_; ++i) {
 		for (int j = 0; j < width_; j++) {
 			switch (block_.at(i).at(j).state) {
+			case -3:Rect(margin_w + block_size_ * j, margin_h + block_size_ * i, block_size_).draw(HSV(0.0, 0.0, 0.8)).drawFrame(1, 1, HSV(0.0, 0.0, 0.6));
+				flag_texture.resized(block_size_ - shadow_size_ * 2).draw(margin_w + shadow_size_ + block_size_ * j, margin_h + shadow_size_ + block_size_ * i);
+				cross_texture.resized(block_size_ - shadow_size_ * 2).draw(margin_w + shadow_size_ + block_size_ * j, margin_h + shadow_size_ + block_size_ * i); break;
 			case -2:Rect(margin_w + block_size_ * j, margin_h + block_size_ * i, block_size_).draw(HSV(0.0, 0.0, 0.8)).drawFrame(1, 1, HSV(0.0, 0.0, 0.6));
 				bomb_texture.resized(block_size_).draw(margin_w + block_size_ * j, margin_h + block_size_ * i); break;
 			case -1:Rect(margin_w + block_size_ * j, margin_h + block_size_ * i, block_size_).draw(HSV(0.0, 0.0, 0.8)).drawFrame(1, 1, HSV(0.0, 0.0, 0.6));
@@ -238,11 +242,14 @@ void Blocks::make_question(Point p) {
 	}
 }
 
-//開いていないブロックを爆弾があるブロックなら爆弾ブロックに、爆弾がないブロックなら開いたブロックに
+//開いていないブロックと?ブロックを爆弾があるブロックなら爆弾ブロックに、爆弾がないブロックなら開いたブロックに、
+//フラグブロックに爆弾があったらstateを-3に
 void Blocks::make_answer() {
 	for (int y = 0; y < height_; ++y) {
 		for (int x = 0; x < width_; ++x) {
-			if (block_.at(y).at(x).state == 1) {
+			if(block_.at(y).at(x).state == 2 && -3:block_.at(y).at(x).isbomb){
+				block_.at(y).at(x).state = -3;
+			}else if (block_.at(y).at(x).state == 1) {
 				if (block_.at(y).at(x).isbomb)
 					block_.at(y).at(x).state = -2;
 				else

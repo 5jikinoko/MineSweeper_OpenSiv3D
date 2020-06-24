@@ -8,7 +8,7 @@
 #include"Constant.h"
 
 struct block {
-	int state = 1;	//-2:爆弾　-1:爆発した　0:開いている　1:開いていない　2:フラグ　3:？
+	int state = 1;	//-3:間違ったところにフラグを立てていた　-2:爆弾　-1:爆発した　0:開いている　1:開いていない　2:フラグ　3:？
 	bool isbomb = false;	//爆弾があるブロックならtrue
 	int neighbor_bombs = 0;	//隣接する爆弾の数
 };
@@ -32,6 +32,7 @@ class Blocks {
 	const Texture flag_texture;
 	const Texture explosion_texture;
 	const Texture question_texture;
+	const Texture cross_texture;
 	const Font font;
 public:
 	//コンストラクタ
