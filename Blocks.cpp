@@ -135,9 +135,8 @@ void Blocks::open(const Point& address) {
 			if (block_.at(address.y).at(address.x).neighbor_bombs == neighbor_EaF) {
 				for (int y = address.y - 1; y <= address.y + 1; ++y) {
 					for (int x = address.x - 1; x <= address.x + 1; ++x) {
-						if (0 <= x && x < width_ && 0 <= y && y < height_)
-							if (x == address.x && y == address.y) continue;
-						open(Point(x, y));
+						if (0 <= x && x < width_ && 0 <= y && y < height_ && !(x == address.x && y == address.y) )
+							open(Point(x, y));
 					}
 				}
 			}
